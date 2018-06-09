@@ -1,0 +1,10 @@
+.select {
+  display: block;
+  width: 100%;
+  min-height: 30px;
+  padding: 5px;
+  outline: none;
+  border: none;
+  border-bottom: 1px solid #000;
+  background-color: transparent;
+}

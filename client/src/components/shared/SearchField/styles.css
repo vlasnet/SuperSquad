@@ -1,0 +1,10 @@
+.search {
+  display: block;
+  width: 95%;
+  min-height: 32px;
+  padding: 5px;
+  outline: none;
+  border: none;
+  border-bottom: 1px solid #000;
+  background-color: transparent;
+}

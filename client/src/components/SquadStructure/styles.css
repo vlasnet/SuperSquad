@@ -1,0 +1,9 @@
+.item {
+  list-style-type: none;
+}
+
+.item:before {
+  position: relative;
+  content: '*';
+  left: -5px;
+}

@@ -1,0 +1,10 @@
+.name {
+  font-size: 14px;
+  line-height: 30px;
+  color: #000;
+}
+
+.buttons_container {
+  display: flex;
+  justify-content: space-between;
+}

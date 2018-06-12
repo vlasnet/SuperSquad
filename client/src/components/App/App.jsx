@@ -156,9 +156,9 @@ export default class App extends Component {
 
   render() {
     const {isFormVisible, filter, heroesList, heroIdsInSquad} = this.state;
-    const freeHeroes = heroesList.filter(hero => heroIdsInSquad.indexOf(hero.id) === -1);
+    const freeHeroes = heroesList.filter(hero => !heroIdsInSquad.includes(hero.id));
     const visibleHeroes = freeHeroes.filter(hero => hero.name.includes(filter));
-    const heroesAddedToSquad = heroesList.filter(hero => heroIdsInSquad.indexOf(hero.id) !== -1);
+    const heroesAddedToSquad = heroesList.filter(hero => heroIdsInSquad.includes(hero.id));
 
     return (
       <Container app>

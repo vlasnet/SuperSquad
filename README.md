@@ -1,2 +1,2 @@
 # SuperSquad
-NodeJS hometask 1
+ReactJS hometask 1

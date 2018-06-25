@@ -2,26 +2,29 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Container from '../shared/Container';
 import Button from '../shared/Button';
-import add from '../../assets/add_gray.png';
-import basket from '../../assets/basket.svg';
-import info from '../../assets/info.svg';
-import remove from '../../assets/basket_full.svg';
+import Icon from '../shared/Icon';
+import {ICONS} from '../shared/Icon/icons';
 import styles from './styles.css'
 
-const Hero = (props) => {
-  const {hero, addHeroToSquad, deleteHero, showHeroInfo, removeHeroFromSquad} = props;
-  return (
-    <Container hero shadow>
-      <p className={styles.name}>{hero.name}</p>
-      <span className={styles.buttons_container}>
-        {addHeroToSquad && <Button small icon={add} onClick={addHeroToSquad} />}
-        {deleteHero && <Button small icon={basket} onClick={() => deleteHero(hero.id)} />}
-        {removeHeroFromSquad && <Button small icon={remove} onClick={() => removeHeroFromSquad(hero.id)} />}
-        {showHeroInfo && <Button small icon={info} onClick={() => showHeroInfo(hero)} />}
+const Hero = ({hero, addHeroToSquad, deleteHero, showHeroInfo, removeHeroFromSquad}) => (
+  <Container hero shadow>
+    <p className={styles.name}>{hero.name}</p>
+    <span className={styles.buttons_container}>
+        {addHeroToSquad && <Button small onClick={addHeroToSquad}>
+          <Icon icon={ICONS.ADD_USER} color="#555"/>
+        </Button>}
+      {deleteHero && <Button small onClick={() => deleteHero(hero.id)}>
+        <Icon icon={ICONS.BASKET} view={297} color="#555"/>
+      </Button>}
+      {removeHeroFromSquad && <Button small onClick={() => removeHeroFromSquad(hero.id)}>
+        <Icon icon={ICONS.BASKET_FULL} view={297} color="#555"/>
+      </Button>}
+      {showHeroInfo && <Button small onClick={() => showHeroInfo(hero)}>
+        <Icon icon={ICONS.INFO} color="#555"/>
+      </Button>}
       </span>
-    </Container>
-  );
-};
+  </Container>
+);
 
 Hero.propTypes = {
   hero: PropTypes.shape({

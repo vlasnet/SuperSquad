@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './styles.css';
 
-const Button = ({type, text, primary, icon, small, absolute, onClick}) => {
+const Button = ({type, children, text, primary, icon, small, absolute, onClick}) => {
   const cls = [
     styles.button,
     primary ? styles.primary: '',
@@ -19,6 +19,7 @@ const Button = ({type, text, primary, icon, small, absolute, onClick}) => {
 
   return (
     <button type={type} className={cls} style={iconStyle} onClick={onClick}>
+      {children}
       {text}
     </button>
   );
@@ -32,6 +33,7 @@ Button.propTypes = {
   onClick: PropTypes.func.isRequired,
   small: PropTypes.bool,
   absolute: PropTypes.bool,
+  children: PropTypes.node,
 };
 
 Button.defaultProps = {
@@ -41,6 +43,7 @@ Button.defaultProps = {
   small: false,
   absolute: false,
   icon: '',
+  children: null,
 };
 
 export default Button;

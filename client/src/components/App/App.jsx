@@ -1,10 +1,15 @@
+/* eslint-disable no-param-reassign */
 import React, {Component} from 'react';
 import Container from '../shared/Container'
-import CreateHero from '../CreateHero'
+import HeroForm from '../HeroForm'
 import HeroList from "../HeroList";
 import SquadEditor from "../SquadEditor";
 import SquadList from "../SquadList";
+import SearchField from "../shared/SearchField";
 import * as api from '../../api';
+import Button from '../shared/Button'
+import Icon from '../shared/Icon';
+import {ICONS} from '../shared/Icon/icons';
 
 export default class App extends Component {
   state = {
@@ -14,100 +19,135 @@ export default class App extends Component {
     savedSquads: [],
     isFormVisible: false,
     isLoading: false,
+    error: null,
   };
 
-  componentWillMount() {
+  componentDidMount() {
     this.fetchAllData();
   }
+
+  getSquad = () =>
+    this.state.heroesList.filter(hero => this.state.heroIdsInSquad.includes(hero.id));
+
+  getSquadStats = (squad) =>
+    squad.reduce(
+      (total, hero) => {
+        total.str += hero.strength;
+        total.int += hero.intelligence;
+        total.spd += hero.speed;
+        return total;
+      },
+      {str: 0, int: 0, spd: 0},
+    );
 
   fetchAllData = () => {
     this.setState({isLoading: true});
 
-    api.fetchSquadsList().then(({data, error}) => {
-      if (error) {
-        console.log(error);
-        this.setState({isLoading: false});
-        return;
-      }
-      this.setState({savedSquads: data});
+    api.fetchSquadsList().then(({data}) => {
+      this.setState(() => ({
+        savedSquads: data,
+        isLoading: false,
+      }));
+    }).catch(({error}) => {
+      console.log('Error on fetchSquadsList! Error reason: ', error);
+      this.setState({
+        isLoading: false,
+        error
+      });
     });
 
-    api.fetchHeroesList().then(({data, error}) => {
-      if (error) {
-        console.log(error);
-        this.setState({isLoading: false});
-        return;
-      }
-      this.setState({heroesList: data, isLoading: false});
+    api.fetchHeroesList().then(({data}) => {
+      this.setState(() => ({
+        heroesList: data,
+        isLoading: false,
+      }));
+    }).catch(({error}) => {
+      console.log('Error on fetchHeroesList! Error reason: ', error);
+      this.setState({
+        isLoading: false,
+        error
+      });
     });
   };
 
   addHero = hero => {
     this.setState({isLoading: true});
 
-    api.addHero(hero).then(({data, error}) => {
-      if (error) {
-        console.log(error);
-        this.setState({isLoading: false});
-        return;
-      }
+    api.addHero(hero).then(({data}) => {
       this.setState(state => ({
         heroesList: [...state.heroesList, data],
         isLoading: false,
       }));
       this.hideForm();
+    }).catch(({error}) => {
+      console.log('Error on addHero! Error reason: ', error);
+      this.setState({
+        isLoading: false,
+        error
+      });
+      this.hideForm();
     });
   };
 
-  addSquad = (squad) => {
+  addSquad = () => {
     this.setState({isLoading: true});
 
-    const {heroes, stats} = squad;
+    const heroesInSquad = this.getSquad();
+    const stats = this.getSquadStats(heroesInSquad);
 
-    if(heroes.length === 0 ||
-       stats.str + stats.int + stats.spd === 0) return;
+    const squad = {
+      heroes: [...heroesInSquad],
+      stats: {...stats}
+    };
 
-    api.addSquad(squad).then(({data, error}) => {
-      if (error) {
-        console.log(error);
-        this.setState({isLoading: false});
-        return;
-      }
+    if (squad.heroes.length === 0 ||
+      stats.str + stats.int + stats.spd === 0) return;
+
+    api.addSquad(squad).then(({data}) => {
       this.setState(state => ({
         savedSquads: [...state.savedSquads, data],
         isLoading: false,
       }));
+      this.resetSquad();
+    }).catch(({error}) => {
+      console.log('Error on addSquad! Error reason: ', error);
+      this.setState({
+        isLoading: false,
+        error
+      });
       this.resetSquad();
     });
   };
 
   deleteHero = id => {
     this.setState({isLoading: true});
-    api.deleteHero(id).then(({error}) => {
-      if (error) {
-        console.log(error);
-        this.setState({isLoading: false});
-        return;
-      }
+    api.deleteHero(id).then(() => {
       this.setState(state => ({
         heroesList: state.heroesList.filter(hero => hero.id !== id),
         isLoading: false,
       }));
+    }).catch(({error}) => {
+      console.log('Error on deleteHero! Error reason: ', error);
+      this.setState({
+        isLoading: false,
+        error
+      });
     });
   };
 
   deleteSquad = id => {
     this.setState({isLoading: true});
-    api.deleteSquad(id).then(({error}) => {
-      if (error) {
-        console.log(error);
-        this.setState({isLoading: false});
-        return;
-      }
+    api.deleteSquad(id).then(() => {
       this.setState(state => ({
         savedSquads: state.savedSquads.filter(squad => squad.id !== id),
         isLoading: false,
       }));
+    }).catch(({error}) => {
+      console.log('Error on deleteSquad! Error reason: ', error);
+      this.setState({
+        isLoading: false,
+        error
+      });
     });
   };
 
@@ -156,32 +196,33 @@ export default class App extends Component {
 
   render() {
     const {isFormVisible, filter, heroesList, heroIdsInSquad} = this.state;
-    const freeHeroes = heroesList.filter(hero => !heroIdsInSquad.includes(hero.id));
-    const visibleHeroes = freeHeroes.filter(hero => hero.name.includes(filter));
-    const heroesAddedToSquad = heroesList.filter(hero => heroIdsInSquad.includes(hero.id));
+    const visibleHeroes = heroesList.filter(hero => !heroIdsInSquad.includes(hero.id) && hero.name.includes(filter));
+    const heroesAddedToSquad = this.getSquad();
 
     return (
       <Container app>
-        <Container title={'Super Squad'} />
+        <Container title='Super Squad'/>
         <Container content>
+          <Container title='Create Hero' column shadow>
+            {!isFormVisible && <Button text='Add Hero' onClick={this.showForm}>
+              <Icon icon={ICONS.EDIT} color="#fff"/>
+            </Button>}
+            {isFormVisible && <HeroForm onSave={this.addHero}/>}
+          </Container>
 
-          <CreateHero
-            isFormVisible={isFormVisible}
-            onClick={this.showForm}
-            onSave={this.addHero}
-          />
-
-          <HeroList
-            filter={filter}
-            handleFilter={this.handleFilter}
-            visibleHeroes={visibleHeroes}
-            addHeroToSquad={this.addHeroToSquad}
-            deleteHero={this.deleteHero}
-            showHeroInfo={this.showHeroInfo}
-          />
+          <Container title='Heroes' column shadow>
+            <SearchField filter={filter} handleFilter={this.handleFilter}/>
+            <HeroList
+              visibleHeroes={visibleHeroes}
+              addHeroToSquad={this.addHeroToSquad}
+              deleteHero={this.deleteHero}
+              showHeroInfo={this.showHeroInfo}
+            />
+          </Container>
 
           <SquadEditor
             heroesInSquad={heroesAddedToSquad}
+            stats={this.getSquadStats(heroesAddedToSquad)}
             addSquad={this.addSquad}
             resetSquad={this.resetSquad}
             removeHeroFromSquad={this.removeHeroFromSquad}

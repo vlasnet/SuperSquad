@@ -4,22 +4,30 @@ import Container from "../shared/Container";
 import Button from "../shared/Button";
 import SquadStats from "../SquadStats";
 import SquadStructure from "../SquadStructure";
-import basket from '../../assets/basket.svg';
+import Icon from '../shared/Icon';
+import {ICONS} from '../shared/Icon/icons';
+import styles from './styles.css';
 
 const SquadList = ({savedSquads, deleteSquad}) => (
 
-  <Container title={'Saved Squads'} column shadow>
-    {savedSquads.map(squad => (
-      <Container key={squad.id} squad shadow>
-        <Container title={'Heroes:'} info>
-          <SquadStructure heroes={squad.heroes} />
-        </Container>
-        <Container title={'Stats:'} info>
-          <SquadStats stats={squad.stats} />
-        </Container>
-        <Button small absolute icon={basket} onClick={() => deleteSquad(squad.id)}/>
-      </Container>
-    ))}
+  <Container title='Saved Squads' column shadow>
+    <ul className={styles.list}>
+      {savedSquads.map(squad => (
+        <li key={squad.id} className={styles.listItem}>
+          <Container squad shadow>
+            <Container title='Heroes:' info>
+              <SquadStructure heroes={squad.heroes}/>
+            </Container>
+            <Container title='Stats:' info>
+              <SquadStats stats={squad.stats}/>
+            </Container>
+            <Button small absolute onClick={() => deleteSquad(squad.id)}>
+              <Icon icon={ICONS.BASKET} view={297} color="#555"/>
+            </Button>
+          </Container>
+        </li>
+      ))}
+    </ul>
   </Container>
 );
 

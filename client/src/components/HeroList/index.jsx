@@ -1,23 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Container from "../shared/Container";
-import SearchField from "../shared/SearchField";
 import Hero from "../Hero";
+import styles from './styles.css';
 
-const HeroList = ({filter, handleFilter, visibleHeroes, addHeroToSquad, deleteHero, showHeroInfo}) => (
+const HeroList = ({visibleHeroes, addHeroToSquad, deleteHero, showHeroInfo}) => (
 
-  <Container title={'Heroes'} column shadow>
-    <SearchField filter={filter} handleFilter={handleFilter}/>
-    {visibleHeroes.map(hero => (
-      <Hero key={hero.id} hero={hero} addHeroToSquad={()=>addHeroToSquad(hero.id)} deleteHero={deleteHero}
-            showHeroInfo={showHeroInfo}/>
-    ))}
+  <Container stats>
+    <ul className={styles.list}>
+      {visibleHeroes.map(hero => (
+        <li key={hero.id} className={styles.listItem}>
+          <Hero hero={hero} addHeroToSquad={() => addHeroToSquad(hero.id)} deleteHero={deleteHero}
+                showHeroInfo={showHeroInfo}/>
+        </li>
+      ))}
+    </ul>
   </Container>
 );
 
 HeroList.propTypes = {
-  filter: PropTypes.string.isRequired,
-  handleFilter: PropTypes.func.isRequired,
   addHeroToSquad: PropTypes.func.isRequired,
   deleteHero: PropTypes.func.isRequired,
   showHeroInfo: PropTypes.func.isRequired,

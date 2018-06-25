@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import Container from '../shared/Container';
 import Button from '../shared/Button'
-import edit from '../../assets/edit.svg';
+import Icon from '../shared/Icon';
+import { ICONS } from '../shared/Icon/icons';
 import styles from './styles.css';
 
 const INITIAL_STATE = {
@@ -17,7 +18,6 @@ const makeOptions = (num, name) => {
     <option
       key={name}
       value={name}
-      defaultValue
       disabled
     >
       {name}
@@ -36,16 +36,10 @@ const makeOptions = (num, name) => {
 class CreateHeroForm extends Component {
   state = {...INITIAL_STATE};
 
-  onInputHandler = event => {
-    const target = event.target;
-    this.setState({ name: target.value });
-  };
+  onInputChange = ({ target }) => {
+    const { name, value } = target;
 
-  onSelectHandler = event => {
-    const target = event.target;
-    this.setState({
-      [target.name]: target.value,
-    })
+    this.setState({ [name]: value });
   };
 
   onSubmit = event => {
@@ -78,15 +72,16 @@ class CreateHeroForm extends Component {
         <input
           className={styles.select}
           type="text"
+          name="name"
           value={name}
           placeholder="Hero name"
-          onChange={this.onInputHandler}
+          onChange={this.onInputChange}
         />
         <select
           className={styles.select}
           name="strength"
           value={strength}
-          onChange={this.onSelectHandler}
+          onChange={this.onInputChange}
         >
           {makeOptions(10, `${strength}`)}
         </select>
@@ -94,7 +89,7 @@ class CreateHeroForm extends Component {
           className={styles.select}
           name="intelligence"
           value={intelligence}
-          onChange={this.onSelectHandler}
+          onChange={this.onInputChange}
         >
           {makeOptions(10, `${intelligence}`)}
         </select>
@@ -102,16 +97,17 @@ class CreateHeroForm extends Component {
           className={styles.select}
           name="speed"
           value={speed}
-          onChange={this.onSelectHandler}
+          onChange={this.onInputChange}
         >
           {makeOptions(10, `${speed}`)}
         </select>
 
         <Button
-          text={'Create Hero'}
-          icon={edit}
+          text='Create Hero'
           onClick={this.onSubmit}
-        />
+        >
+          <Icon icon={ICONS.EDIT} size={20} color="#fff"/>
+        </Button>
 
       </Container>
     );
